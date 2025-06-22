@@ -58,6 +58,58 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
+## 🗄️ Base de Datos
+
+### Configuración Inicial
+
+```bash
+# Generar cliente de Prisma
+$ pnpm db:generate
+
+# Crear y aplicar migraciones
+$ pnpm db:migrate
+
+# Poblar con datos iniciales
+$ pnpm db:seed
+```
+
+### Comandos de Base de Datos
+
+```bash
+# Generar cliente de Prisma
+$ pnpm db:generate
+
+# Crear nueva migración
+$ pnpm db:migrate
+
+# Aplicar migraciones en producción
+$ pnpm db:migrate:deploy
+
+# Hacer push directo (solo desarrollo)
+$ pnpm db:push
+
+# Poblar con datos iniciales
+$ pnpm db:seed
+
+# Abrir Prisma Studio (interfaz visual)
+$ pnpm db:studio
+```
+
+## 🔍 Prisma Studio
+
+Para visualizar y editar datos de forma visual:
+
+```bash
+pnpm db:studio
+```
+
+Esto abrirá una interfaz web en `http://localhost:5555` donde podrás:
+- Ver todas las tablas de la base de datos
+- Editar datos directamente
+- Ejecutar consultas SQL
+- Ver relaciones entre entidades
+- Exportar datos
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
