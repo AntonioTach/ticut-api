@@ -13,7 +13,6 @@ export class BarbersService {
 
   async create(createBarberDto: CreateBarberDto) {
     const { password, ...userData } = createBarberDto;
-    
     const hashedPassword = await this.hashService.hashPassword(password);
 
     const barber = await this.prisma.user.create({
