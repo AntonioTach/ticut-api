@@ -1,5 +1,7 @@
 import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Role } from '../../core/enums/role.enum';
+import { RoleEnum } from '@prisma/client';
 
 export class RegisterDto {
   @ApiProperty({
@@ -10,9 +12,9 @@ export class RegisterDto {
   email: string;
 
   @ApiProperty({
-    description: 'Contraseña del usuario (mínimo 6 caracteres)',
-    example: 'password123',
-    minLength: 6,
+    description: 'Contraseña del usuario (mínimo 8 caracteres)',
+    example: 'password12345',
+    minLength: 8,
   })
   @IsString()
   @MinLength(6)
@@ -32,4 +34,12 @@ export class RegisterDto {
   @IsString()
   @IsOptional()
   phoneNumber?: string;
+
+  @ApiPropertyOptional({
+    description: 'Rol del usuario. Por defecto es ADMIN (OWNER)',
+    enum: Role,
+    example: Role.ADMIN,
+  })
+  @IsOptional()
+  role?: RoleEnum;
 } 

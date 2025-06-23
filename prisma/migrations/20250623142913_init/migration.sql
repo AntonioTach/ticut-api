@@ -1,7 +1,10 @@
+-- CreateEnum
+CREATE TYPE "RoleEnum" AS ENUM ('ADMIN', 'OWNER', 'BARBER');
+
 -- CreateTable
 CREATE TABLE "roles" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" "RoleEnum" NOT NULL,
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
 );

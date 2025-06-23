@@ -15,8 +15,8 @@ import {
 import { JwtAuthGuard } from '../core/guards/jwt-auth.guard';
 import { RolesGuard } from '../core/guards/roles.guard';
 import { Roles } from '../core/decorators/roles.decorator';
-import { Role } from '../core/enums/role.enum';
 import { DashboardService } from './dashboard.service';
+import { Role } from '../core/enums/role.enum';
 
 @ApiTags('dashboard')
 @ApiBearerAuth('JWT-auth')

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RoleEnum } from '@prisma/client';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getOverview(barbershopId: string) {
     // Obtener estadísticas generales
@@ -20,9 +21,9 @@ export class DashboardService {
         where: { barbershopId, active: true },
       }),
       this.prisma.user.count({
-        where: { 
+        where: {
           barbershopId,
-          role: 'BARBER',
+          //role: 'BARBER',
         },
       }),
       this.getMonthlyRevenue(barbershopId),
@@ -68,23 +69,23 @@ export class DashboardService {
   async getRecentActivity(barbershopId: string, limit: number = 10) {
     // Aquí puedes implementar la lógica para obtener actividad reciente
     // Por ejemplo: nuevas citas, nuevos clientes, servicios realizados, etc.
-    
-    const recentClients = await this.prisma.client.findMany({
-      where: { barbershopId },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      select: {
-        id: true,
-        name: true,
-        lastname: true,
-        createdAt: true,
-      },
-    });
 
-    return {
-      recentClients,
-      // Puedes agregar más tipos de actividad aquí
-    };
+    // const recentClients = await this.prisma.client.findMany({
+    //   where: { barbershopId },
+    //   orderBy: { createdAt: 'desc' },
+    //   take: limit,
+    //   select: {
+    //     id: true,
+    //     name: true,
+    //     lastname: true,
+    //     createdAt: true,
+    //   },
+    // });
+
+    // return {
+    //   recentClients,
+    //   // Puedes agregar más tipos de actividad aquí
+    // };
   }
 
   async getQuickActions(barbershopId: string) {
@@ -99,9 +100,11 @@ export class DashboardService {
     });
 
     const availableBarbers = await this.prisma.user.findMany({
-      where: { 
+      where: {
         barbershopId,
-        role: 'BARBER',
+        role: {
+          name: RoleEnum.BARBER,
+        },
       },
       select: {
         id: true,
@@ -135,7 +138,7 @@ export class DashboardService {
     const newClients = await this.prisma.client.count({
       where: {
         barbershopId,
-        createdAt: { gte: startDate },
+        //createdAt: { gte: startDate },
       },
     });
 

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, RoleEnum } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -10,17 +10,17 @@ async function main() {
     prisma.role.upsert({
       where: { id: 1 },
       update: {},
-      create: { id: 1, name: 'owner' }
+      create: { id: 1, name: RoleEnum.ADMIN }
     }),
     prisma.role.upsert({
       where: { id: 2 },
       update: {},
-      create: { id: 2, name: 'barber' }
+      create: { id: 2, name: RoleEnum.OWNER }
     }),
     prisma.role.upsert({
       where: { id: 3 },
       update: {},
-      create: { id: 3, name: 'admin' }
+      create: { id: 3, name: RoleEnum.BARBER }
     })
   ]);
 
