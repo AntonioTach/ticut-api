@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BarbersModule } from './modules/barbers/barbers.module';
 import { UsersModule } from './modules/users/users.module';
 import { ServicesModule } from './modules/services/services.module';
+import { ClientsModule } from './modules/clients/clients.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
     BarbersModule,
     UsersModule,
     ServicesModule,
+    ClientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
