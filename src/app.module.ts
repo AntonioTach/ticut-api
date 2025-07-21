@@ -8,7 +8,9 @@ import { BarbersModule } from './modules/barbers/barbers.module';
 import { UsersModule } from './modules/users/users.module';
 import { ServicesModule } from './modules/services/services.module';
 import { ClientsModule } from './modules/clients/clients.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { BarbershopsModule } from './modules/barbershops/barbershops.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { PrismaModule } from './modules/prisma/prisma.module';
     UsersModule,
     ServicesModule,
     ClientsModule,
+    DashboardModule,
+    BarbershopsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

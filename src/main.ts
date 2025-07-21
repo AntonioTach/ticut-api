@@ -26,6 +26,7 @@ async function bootstrap() {
     .addTag('barbers', 'Gestión de barberos')
     .addTag('services', 'Gestión de servicios')
     .addTag('clients', 'Gestión de clientes')
+    .addTag('dashboard', 'Dashboard y estadísticas')
     .addBearerAuth(
       {
         type: 'http',

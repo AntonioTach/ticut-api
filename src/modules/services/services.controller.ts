@@ -27,8 +27,8 @@ import { Service } from './entities/service.entity';
 import { JwtAuthGuard } from '../core/guards/jwt-auth.guard';
 import { RolesGuard } from '../core/guards/roles.guard';
 import { Roles } from '../core/decorators/roles.decorator';
-import { Role } from '../core/enums/role.enum';
 import { Public } from '../core/decorators/public.decorator';
+import { Role } from '../core/enums/role.enum';
 
 @ApiTags('services')
 @ApiBearerAuth('JWT-auth')

@@ -121,6 +121,8 @@ export class ServicesService {
       durationMinutes: prismaService.durationMinutes,
       active: prismaService.active,
       imageUrl: prismaService.imageUrl,
+      createdAt: prismaService.createdAt,
+      updatedAt: prismaService.updatedAt,
     };
   }
 } 

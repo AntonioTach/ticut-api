@@ -1,9 +1,14 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { HashService } from '../shared/services/hash.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RoleEnum } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -14,8 +19,8 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const { email, password, name, phoneNumber } = registerDto;
-
+    const { email, password, name, phoneNumber, role } = registerDto;
+    console.log(role);
     // Verificar si el usuario ya existe
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
@@ -28,6 +33,16 @@ export class AuthService {
     // Hash de la contraseña
     const hashedPassword = await this.hashService.hashPassword(password);
 
+    // Buscar el roleId correspondiente
+    const roleName = role as unknown as RoleEnum;
+    console.log(roleName);  
+    const roleRecord = await this.prisma.role.findUnique({
+      where: { name: roleName },
+    });
+    if (!roleRecord) {
+      throw new ConflictException('Rol no válido');
+    }
+
     // Crear el usuario
     const user = await this.prisma.user.create({
       data: {
@@ -35,7 +50,7 @@ export class AuthService {
         passwordHash: hashedPassword,
         name,
         phoneNumber: phoneNumber || '',
-        roleId: 1, // Role por defecto: USER
+        roleId: roleRecord.id,
       },
       select: {
         id: true,
