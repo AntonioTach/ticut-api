@@ -38,7 +38,7 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Crear un nuevo servicio',
     description: 'Crea un nuevo servicio en la barbería',
@@ -138,7 +138,7 @@ export class ServicesController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Actualizar un servicio',
     description: 'Actualiza los datos de un servicio existente',
@@ -181,7 +181,7 @@ export class ServicesController {
   }
 
   @Patch(':id/toggle-active')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Activar/desactivar servicio',
     description: 'Cambia el estado activo/inactivo de un servicio',
@@ -213,7 +213,7 @@ export class ServicesController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Eliminar un servicio',

@@ -1,71 +1,58 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { BarbershopsService } from './barbershops.service';
 import { CreateBarbershopDto } from './dto/create-barbershop.dto';
 import { UpdateBarbershopDto } from './dto/update-barbershop.dto';
-import { JwtAuthGuard } from '../core/guards/jwt-auth.guard';
-import { Public } from '../core/decorators/public.decorator';
-import { CreateBarbershopWithOwnerDto } from './dto/create-barbershop-with-owner.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { Barbershop } from './entities/barbershop.entity';
+import { Roles } from '../core/decorators/roles.decorator';
+import { Role } from '../core/enums/role.enum';
 
 @ApiTags('barbershops')
+@ApiBearerAuth('JWT-auth')
 @Controller('barbershops')
 export class BarbershopsController {
   constructor(private readonly barbershopsService: BarbershopsService) {}
 
-  @Public()
+  @Roles(Role.OWNER)
   @Post()
-  @ApiOperation({ summary: 'Crear barbería', description: 'Crea una nueva barbería.' })
+  @ApiOperation({ summary: 'Crear sucursal', description: 'El OWNER crea una nueva sucursal dentro de su cadena.' })
   @ApiBody({ type: CreateBarbershopDto })
-  @ApiResponse({ status: 201, description: 'Barbería creada exitosamente', type: Barbershop })
-  create(@Body() createBarbershopDto: CreateBarbershopDto) {
-    return this.barbershopsService.create(createBarbershopDto);
+  @ApiResponse({ status: 201, description: 'Sucursal creada', type: Barbershop })
+  create(@Body() dto: CreateBarbershopDto) {
+    return this.barbershopsService.create(dto);
   }
 
-  @Public()
-  @Post('register')
-  @ApiOperation({ summary: 'Registrar barbería y propietario', description: 'Crea una barbería y su usuario propietario en una sola operación.' })
-  @ApiBody({ type: CreateBarbershopWithOwnerDto })
-  @ApiResponse({ status: 201, description: 'Barbería y propietario creados exitosamente', schema: { example: { owner: { id: 'uuid', email: 'owner@example.com', name: 'Owner', roleId: 1 }, barbershop: { id: 'uuid', name: 'Barbería Central', address: 'Calle Falsa 123', ownerId: 'uuid' } } } })
-  createWithOwner(@Body() dto: CreateBarbershopWithOwnerDto) {
-    return this.barbershopsService.createWithOwner(dto);
+  @Roles(Role.OWNER)
+  @Get('brand/:brandId')
+  @ApiOperation({ summary: 'Sucursales de una cadena', description: 'Retorna todas las sucursales de la cadena del OWNER.' })
+  @ApiResponse({ status: 200, description: 'Lista de sucursales', type: [Barbershop] })
+  findByBrand(@Param('brandId') brandId: string) {
+    return this.barbershopsService.findByBrand(brandId);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @Get()
-  @ApiOperation({ summary: 'Obtener todas las barberías', description: 'Devuelve una lista de todas las barberías.' })
-  @ApiResponse({ status: 200, description: 'Lista de barberías', type: [Barbershop] })
-  findAll() {
-    return this.barbershopsService.findAll();
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @Roles(Role.OWNER)
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener barbería por ID', description: 'Devuelve los datos de una barbería específica.' })
-  @ApiResponse({ status: 200, description: 'Barbería encontrada', type: Barbershop })
-  @ApiResponse({ status: 404, description: 'Barbería no encontrada' })
+  @ApiOperation({ summary: 'Obtener sucursal por ID' })
+  @ApiResponse({ status: 200, description: 'Sucursal encontrada', type: Barbershop })
+  @ApiResponse({ status: 404, description: 'Sucursal no encontrada' })
   findOne(@Param('id') id: string) {
     return this.barbershopsService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @Roles(Role.OWNER)
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar barbería', description: 'Actualiza los datos de una barbería.' })
+  @ApiOperation({ summary: 'Actualizar sucursal' })
   @ApiBody({ type: UpdateBarbershopDto })
-  @ApiResponse({ status: 200, description: 'Barbería actualizada', type: Barbershop })
-  update(@Param('id') id: string, @Body() updateBarbershopDto: UpdateBarbershopDto) {
-    return this.barbershopsService.update(id, updateBarbershopDto);
+  @ApiResponse({ status: 200, description: 'Sucursal actualizada', type: Barbershop })
+  update(@Param('id') id: string, @Body() dto: UpdateBarbershopDto) {
+    return this.barbershopsService.update(id, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @Roles(Role.OWNER)
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar barbería', description: 'Elimina una barbería por su ID.' })
-  @ApiResponse({ status: 200, description: 'Barbería eliminada' })
+  @ApiOperation({ summary: 'Eliminar sucursal' })
+  @ApiResponse({ status: 200, description: 'Sucursal eliminada' })
   remove(@Param('id') id: string) {
     return this.barbershopsService.remove(id);
   }
-} 
+}

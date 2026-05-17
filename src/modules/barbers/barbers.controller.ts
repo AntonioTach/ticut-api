@@ -33,7 +33,7 @@ export class BarbersController {
   constructor(private readonly barbersService: BarbersService) {}
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Crear un nuevo barbero',
     description: 'Crea un nuevo barbero en el sistema (solo administradores)',
@@ -64,7 +64,7 @@ export class BarbersController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Obtener todos los barberos',
     description: 'Obtiene la lista de todos los barberos',
@@ -87,7 +87,7 @@ export class BarbersController {
   }
 
   @Get(':id')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Obtener un barbero por ID',
     description: 'Obtiene los detalles de un barbero específico',
@@ -119,7 +119,7 @@ export class BarbersController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Actualizar un barbero',
     description: 'Actualiza los datos de un barbero existente (solo administradores)',
@@ -159,7 +159,7 @@ export class BarbersController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Eliminar un barbero',
     description: 'Elimina un barbero del sistema (solo administradores)',

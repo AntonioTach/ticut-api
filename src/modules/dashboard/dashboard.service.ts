@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { RoleEnum } from '@prisma/client';
 
 @Injectable()
 export class DashboardService {
@@ -20,11 +19,8 @@ export class DashboardService {
       this.prisma.service.count({
         where: { barbershopId, active: true },
       }),
-      this.prisma.user.count({
-        where: {
-          barbershopId,
-          //role: 'BARBER',
-        },
+      this.prisma.barbershopBarber.count({
+        where: { barbershopId, isActive: true },
       }),
       this.getMonthlyRevenue(barbershopId),
     ]);
@@ -99,17 +95,9 @@ export class DashboardService {
       },
     });
 
-    const availableBarbers = await this.prisma.user.findMany({
-      where: {
-        barbershopId,
-        role: {
-          name: RoleEnum.BARBER,
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-      },
+    const availableBarbers = await this.prisma.barbershopBarber.findMany({
+      where: { barbershopId, isActive: true },
+      select: { user: { select: { id: true, name: true } } },
     });
 
     return {

@@ -10,7 +10,7 @@ export class CreateBarbershopDto {
   @IsString()
   address: string;
 
-  @ApiProperty({ description: 'ID del propietario', example: 'uuid-owner-id' })
+  @ApiProperty({ description: 'ID de la cadena (brand)', example: 'uuid-brand-id' })
   @IsString()
-  ownerId: string;
+  brandId: string;
 } 

@@ -10,7 +10,7 @@ async function main() {
     prisma.role.upsert({
       where: { id: 1 },
       update: {},
-      create: { id: 1, name: RoleEnum.ADMIN }
+      create: { id: 1, name: RoleEnum.SUPER_ADMIN }
     }),
     prisma.role.upsert({
       where: { id: 2 },

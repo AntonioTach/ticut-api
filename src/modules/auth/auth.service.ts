@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { HashService } from '../shared/services/hash.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RegisterOwnerDto } from './dto/register-owner.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,56 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     return this.createUserWithRole(registerDto, RoleEnum.BARBER);
+  }
+
+  async registerOwner(dto: RegisterOwnerDto) {
+    const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (existing) {
+      throw new ConflictException('El email ya está registrado');
+    }
+
+    const hashedPassword = await this.hashService.hashPassword(dto.password);
+
+    const ownerRole = await this.prisma.role.findUnique({ where: { name: RoleEnum.OWNER } });
+    if (!ownerRole) {
+      throw new ConflictException('Rol OWNER no encontrado — ejecuta el seed');
+    }
+
+    const { user, brand, barbershop } = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email: dto.email,
+          passwordHash: hashedPassword,
+          name: dto.name,
+          phoneNumber: dto.phoneNumber ?? '',
+          roleId: ownerRole.id,
+        },
+        select: { id: true, email: true, name: true },
+      });
+
+      const brand = await tx.brand.create({
+        data: { name: dto.brandName, ownerId: user.id },
+        select: { id: true, name: true },
+      });
+
+      const barbershop = await tx.barbershop.create({
+        data: { name: dto.barbershopName, address: dto.address, brandId: brand.id },
+        select: { id: true, name: true, address: true },
+      });
+
+      return { user, brand, barbershop };
+    });
+
+    const payload = { sub: user.id, email: user.email, role: RoleEnum.OWNER };
+    const token = this.jwtService.sign(payload);
+
+    return {
+      message: 'Registro exitoso',
+      token,
+      user: { ...user, role: RoleEnum.OWNER },
+      brand,
+      barbershop,
+    };
   }
 
   async createUserWithRole(

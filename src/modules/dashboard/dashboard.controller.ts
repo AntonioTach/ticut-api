@@ -26,7 +26,7 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('overview')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Vista general del dashboard',
     description: 'Obtiene estadísticas generales para el dashboard',
@@ -56,7 +56,7 @@ export class DashboardController {
   }
 
   @Get('statistics')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Estadísticas detalladas',
     description: 'Obtiene estadísticas detalladas para gráficos y métricas',
@@ -81,7 +81,7 @@ export class DashboardController {
   }
 
   @Get('recent-activity')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Actividad reciente',
     description: 'Obtiene la actividad reciente de la barbería',
@@ -105,7 +105,7 @@ export class DashboardController {
   }
 
   @Get('quick-actions')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Acciones rápidas',
     description: 'Obtiene datos para acciones rápidas del dashboard',

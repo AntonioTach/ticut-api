@@ -36,7 +36,7 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Crear un nuevo cliente',
     description: 'Crea un nuevo cliente en la barbería del usuario autenticado',
@@ -68,7 +68,7 @@ export class ClientsController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Obtener todos los clientes',
     description: 'Obtiene la lista de todos los clientes de la barbería',
@@ -89,7 +89,7 @@ export class ClientsController {
   }
 
   @Get(':id')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Obtener un cliente por ID',
     description: 'Obtiene los detalles de un cliente específico',
@@ -119,7 +119,7 @@ export class ClientsController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Actualizar un cliente',
     description: 'Actualiza los datos de un cliente existente',
@@ -161,7 +161,7 @@ export class ClientsController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Eliminar un cliente',
@@ -190,7 +190,7 @@ export class ClientsController {
   }
 
   @Get('search/phone/:phone')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Buscar cliente por teléfono',
     description: 'Busca un cliente por su número de teléfono',
@@ -220,7 +220,7 @@ export class ClientsController {
   }
 
   @Get('search/email/:email')
-  @Roles(Role.ADMIN, Role.BARBER)
+  @Roles(Role.OWNER, Role.BARBER)
   @ApiOperation({
     summary: 'Buscar cliente por email',
     description: 'Busca un cliente por su dirección de email',
@@ -250,7 +250,7 @@ export class ClientsController {
   }
 
   @Get('admin/test')
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Prueba del módulo',
     description: 'Endpoint de prueba para verificar que el módulo funciona correctamente',

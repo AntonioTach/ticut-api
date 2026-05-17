@@ -1,8 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { RoleEnum } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { HashService } from '../shared/services/hash.service';
 import { CreateBarberDto } from './dto/create-barber.dto';
 import { UpdateBarberDto } from './dto/update-barber.dto';
-import { HashService } from '../shared/services/hash.service';
+
+const barberInclude = {
+  role: true,
+  barbershops: {
+    where: { isActive: true },
+    include: { barbershop: { select: { id: true, name: true, address: true } } },
+  },
+} as const;
 
 @Injectable()
 export class BarbersService {
@@ -11,122 +20,67 @@ export class BarbersService {
     private hashService: HashService,
   ) {}
 
-  async create(createBarberDto: CreateBarberDto) {
-    const { password, ...userData } = createBarberDto;
+  async create(dto: CreateBarberDto) {
+    const { password, barbershopId, ...userData } = dto;
     const hashedPassword = await this.hashService.hashPassword(password);
 
+    const barberRole = await this.prisma.role.findUnique({ where: { name: RoleEnum.BARBER } });
+
     const barber = await this.prisma.user.create({
-      data: {
-        ...userData,
-        passwordHash: hashedPassword,
-        roleId: 2, // Role BARBER
-      },
-      include: {
-        role: true,
-        barbershop: {
-          select: {
-            id: true,
-            name: true,
-            address: true,
-          },
-        },
-      },
+      data: { ...userData, passwordHash: hashedPassword, roleId: barberRole.id },
+      include: barberInclude,
     });
+
+    if (barbershopId) {
+      await this.prisma.barbershopBarber.create({
+        data: { userId: barber.id, barbershopId },
+      });
+    }
 
     return barber;
   }
 
   async findAll() {
-    const barbers = await this.prisma.user.findMany({
-      where: {
-        roleId: 2, // Role BARBER
-      },
-      include: {
-        role: true,
-        barbershop: {
-          select: {
-            id: true,
-            name: true,
-            address: true,
-          },
-        },
-      },
+    return this.prisma.user.findMany({
+      where: { role: { name: RoleEnum.BARBER } },
+      include: barberInclude,
     });
-
-    return barbers;
   }
 
   async findOne(id: string) {
     const barber = await this.prisma.user.findFirst({
-      where: {
-        id,
-        roleId: 2, // Role BARBER
-      },
-      include: {
-        role: true,
-        barbershop: {
-          select: {
-            id: true,
-            name: true,
-            address: true,
-          },
-        },
-      },
+      where: { id, role: { name: RoleEnum.BARBER } },
+      include: barberInclude,
     });
 
-    if (!barber) {
-      throw new NotFoundException(`Barbero con ID ${id} no encontrado`);
-    }
-
+    if (!barber) throw new NotFoundException(`Barbero ${id} no encontrado`);
     return barber;
   }
 
-  async update(id: string, updateBarberDto: UpdateBarberDto) {
-    const { password, ...updateData } = updateBarberDto;
-
-    const updatePayload: any = { ...updateData };
+  async update(id: string, dto: UpdateBarberDto) {
+    const { password, ...updateData } = dto;
+    const payload: any = { ...updateData };
 
     if (password) {
-      updatePayload.passwordHash = await this.hashService.hashPassword(password);
+      payload.passwordHash = await this.hashService.hashPassword(password);
     }
 
-    const barber = await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { id },
-      data: updatePayload,
-      include: {
-        role: true,
-        barbershop: {
-          select: {
-            id: true,
-            name: true,
-            address: true,
-          },
-        },
-      },
+      data: payload,
+      include: barberInclude,
     });
-
-    return barber;
   }
 
   async remove(id: string) {
-    await this.prisma.user.delete({
-      where: { id },
-    });
-
-    return { message: 'Barbero eliminado exitosamente' };
+    await this.prisma.user.delete({ where: { id } });
+    return { message: 'Barbero eliminado' };
   }
 
   async findByBarbershop(barbershopId: string) {
-    const barbers = await this.prisma.user.findMany({
-      where: {
-        barbershopId,
-        roleId: 2, // Role BARBER
-      },
-      include: {
-        role: true,
-      },
+    return this.prisma.barbershopBarber.findMany({
+      where: { barbershopId, isActive: true },
+      include: { user: { include: { role: true } } },
     });
-
-    return barbers;
   }
 }

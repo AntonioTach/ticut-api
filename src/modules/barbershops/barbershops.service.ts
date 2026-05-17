@@ -1,71 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RoleEnum } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthService } from '../auth/auth.service';
 import { CreateBarbershopDto } from './dto/create-barbershop.dto';
 import { UpdateBarbershopDto } from './dto/update-barbershop.dto';
-import { CreateBarbershopWithOwnerDto } from './dto/create-barbershop-with-owner.dto';
 
 @Injectable()
 export class BarbershopsService {
-  constructor(
-    private prisma: PrismaService,
-    private authService: AuthService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(createBarbershopDto: CreateBarbershopDto) {
-    return this.prisma.barbershop.create({
-      data: createBarbershopDto,
-    });
+  async create(dto: CreateBarbershopDto) {
+    return this.prisma.barbershop.create({ data: dto });
   }
 
   async findAll() {
-    return this.prisma.barbershop.findMany();
+    return this.prisma.barbershop.findMany({ include: { brand: true } });
   }
 
   async findOne(id: string) {
     const barbershop = await this.prisma.barbershop.findUnique({
       where: { id },
+      include: { brand: true, barbers: { include: { user: true } } },
     });
     if (!barbershop) {
-      throw new NotFoundException(`Barbershop with ID ${id} not found`);
+      throw new NotFoundException(`Barbershop ${id} no encontrada`);
     }
     return barbershop;
   }
 
-  async update(id: string, updateBarbershopDto: UpdateBarbershopDto) {
-    return this.prisma.barbershop.update({
-      where: { id },
-      data: updateBarbershopDto,
+  async findByBrand(brandId: string) {
+    return this.prisma.barbershop.findMany({
+      where: { brandId },
+      include: { barbers: { include: { user: true } } },
     });
+  }
+
+  async update(id: string, dto: UpdateBarbershopDto) {
+    return this.prisma.barbershop.update({ where: { id }, data: dto });
   }
 
   async remove(id: string) {
-    await this.prisma.barbershop.delete({
-      where: { id },
-    });
-    return { message: 'Barbershop deleted successfully' };
-  }
-
-  async createWithOwner(dto: CreateBarbershopWithOwnerDto) {
-    // 1. Crear usuario propietario
-    const { user: owner } = await this.authService.createUserWithRole(dto.owner, RoleEnum.OWNER);
-
-    // 2. Crear barbería con ownerId
-    const barbershop = await this.prisma.barbershop.create({
-      data: {
-        ...dto.barbershop,
-        ownerId: owner.id,
-      },
-    });
-
-    // 3. Asociar el usuario con la barbería (barbershopId)
-    await this.prisma.user.update({
-      where: { id: owner.id },
-      data: { barbershopId: barbershop.id },
-    });
-
-    // 4. Retornar ambos objetos
-    return { owner: { ...owner, barbershopId: barbershop.id }, barbershop };
+    await this.prisma.barbershop.delete({ where: { id } });
+    return { message: 'Barbershop eliminada' };
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, Request } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -8,8 +8,8 @@ import {
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { RegisterOwnerDto } from './dto/register-owner.dto';
 import { Public } from '../core/decorators/public.decorator';
 
 @ApiTags('auth')
@@ -20,24 +20,14 @@ export class AuthController {
   @Public()
   @Post('register')
   @ApiOperation({
-    summary: 'Registrar un nuevo usuario',
-    description: 'Crea una nueva cuenta de usuario en el sistema',
+    summary: 'Registrar nuevo owner con su cadena y primera sucursal',
+    description: 'Crea el usuario OWNER, la Brand (cadena) y la primera Barbershop en una sola transacción. Retorna el token JWT listo para usar.',
   })
-  @ApiBody({
-    type: RegisterDto,
-    description: 'Datos del usuario a registrar',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Usuario registrado exitosamente',
-    type: LoginResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Datos inválidos o usuario ya existe',
-  })
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+  @ApiBody({ type: RegisterOwnerDto })
+  @ApiResponse({ status: 201, description: 'Registro exitoso — retorna token + user + brand + barbershop' })
+  @ApiResponse({ status: 409, description: 'El email ya está registrado' })
+  async register(@Body() dto: RegisterOwnerDto) {
+    return this.authService.registerOwner(dto);
   }
 
   @Public()

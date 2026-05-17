@@ -33,7 +33,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Crear un nuevo usuario',
     description: 'Crea un nuevo usuario en el sistema (solo administradores)',
@@ -64,7 +64,7 @@ export class UsersController {
   }
 
   @Get()
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Obtener todos los usuarios',
     description: 'Obtiene la lista de todos los usuarios (solo administradores)',
@@ -87,7 +87,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Obtener un usuario por ID',
     description: 'Obtiene los detalles de un usuario específico (solo administradores)',
@@ -119,7 +119,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Actualizar un usuario',
     description: 'Actualiza los datos de un usuario existente (solo administradores)',
@@ -159,7 +159,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Eliminar un usuario',
     description: 'Elimina un usuario del sistema (solo administradores)',
