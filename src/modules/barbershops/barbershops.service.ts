@@ -1,19 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { RoleEnum } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuthService } from '../auth/auth.service';
 import { CreateBarbershopDto } from './dto/create-barbershop.dto';
 import { UpdateBarbershopDto } from './dto/update-barbershop.dto';
 import { CreateBarbershopWithOwnerDto } from './dto/create-barbershop-with-owner.dto';
-import { Role } from '../core/enums/role.enum';
-import { HashService } from '../shared/services/hash.service';
-import { AuthService } from '../auth/auth.service';
-import { RoleEnum } from '@prisma/client';
-import { toRoleEnum } from '../core/enums/role.enum';
 
 @Injectable()
 export class BarbershopsService {
   constructor(
     private prisma: PrismaService,
-    private hashService: HashService,
     private authService: AuthService,
   ) {}
 
@@ -53,8 +49,7 @@ export class BarbershopsService {
 
   async createWithOwner(dto: CreateBarbershopWithOwnerDto) {
     // 1. Crear usuario propietario
-    const ownerDto = { ...dto.owner, role: toRoleEnum(Role.OWNER) };
-    const { user: owner } = await this.authService.register(ownerDto);
+    const { user: owner } = await this.authService.createUserWithRole(dto.owner, RoleEnum.OWNER);
 
     // 2. Crear barbería con ownerId
     const barbershop = await this.prisma.barbershop.create({

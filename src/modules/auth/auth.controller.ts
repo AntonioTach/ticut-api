@@ -78,6 +78,7 @@ export class AuthController {
     description: 'No autorizado',
   })
   async getProfile(@Request() req) {
+    console.log(req.user);
     return this.authService.validateUser(req.user.id);
   }
 
