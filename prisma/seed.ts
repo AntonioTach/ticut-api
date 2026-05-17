@@ -5,28 +5,28 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting database seeding...');
 
-  // Create roles
+  // ── Roles ────────────────────────────────────────────────────────────────
   const roles = await Promise.all([
     prisma.role.upsert({
       where: { id: 1 },
       update: {},
-      create: { id: 1, name: RoleEnum.SUPER_ADMIN }
+      create: { id: 1, name: RoleEnum.SUPER_ADMIN },
     }),
     prisma.role.upsert({
       where: { id: 2 },
       update: {},
-      create: { id: 2, name: RoleEnum.OWNER }
+      create: { id: 2, name: RoleEnum.OWNER },
     }),
     prisma.role.upsert({
       where: { id: 3 },
       update: {},
-      create: { id: 3, name: RoleEnum.BARBER }
-    })
+      create: { id: 3, name: RoleEnum.BARBER },
+    }),
   ]);
 
-  console.log('✅ Roles created:', roles.map(r => r.name));
+  console.log('✅ Roles:', roles.map((r) => r.name).join(', '));
 
-  // Create plans
+  // ── Plans ─────────────────────────────────────────────────────────────────
   const plans = await Promise.all([
     prisma.plan.upsert({
       where: { id: 1 },
@@ -39,9 +39,9 @@ async function main() {
         featuresJson: {
           maxBarbers: 3,
           maxClients: 100,
-          features: ['Gestión de citas', 'Clientes', 'Servicios básicos']
-        }
-      }
+          features: ['Gestión de citas', 'Clientes', 'Servicios básicos'],
+        },
+      },
     }),
     prisma.plan.upsert({
       where: { id: 2 },
@@ -54,9 +54,9 @@ async function main() {
         featuresJson: {
           maxBarbers: 8,
           maxClients: 500,
-          features: ['Gestión de citas', 'Clientes', 'Servicios avanzados', 'Promociones', 'Reportes']
-        }
-      }
+          features: ['Gestión de citas', 'Clientes', 'Servicios avanzados', 'Promociones', 'Reportes'],
+        },
+      },
     }),
     prisma.plan.upsert({
       where: { id: 3 },
@@ -67,48 +67,48 @@ async function main() {
         price: 99.99,
         description: 'Plan empresarial para cadenas de barberías',
         featuresJson: {
-          maxBarbers: -1, // Sin límite
-          maxClients: -1, // Sin límite
-          features: ['Todo lo anterior', 'Múltiples sucursales', 'API', 'Soporte prioritario']
-        }
-      }
-    })
+          maxBarbers: -1,
+          maxClients: -1,
+          features: ['Todo lo anterior', 'Múltiples sucursales', 'API', 'Soporte prioritario'],
+        },
+      },
+    }),
   ]);
 
-  console.log('✅ Plans created:', plans.map(p => p.name));
+  console.log('✅ Plans:', plans.map((p) => p.name).join(', '));
 
-  // Create appointment statuses
-  const appointmentStatuses = await Promise.all([
+  // ── Appointment statuses ──────────────────────────────────────────────────
+  const statuses = await Promise.all([
     prisma.appointmentStatus.upsert({
       where: { id: 1 },
       update: {},
-      create: { id: 1, name: 'Scheduled', colorHex: '#3B82F6' }
+      create: { id: 1, name: 'Scheduled', colorHex: '#3B82F6' },
     }),
     prisma.appointmentStatus.upsert({
       where: { id: 2 },
       update: {},
-      create: { id: 2, name: 'In Progress', colorHex: '#F59E0B' }
+      create: { id: 2, name: 'In Progress', colorHex: '#F59E0B' },
     }),
     prisma.appointmentStatus.upsert({
       where: { id: 3 },
       update: {},
-      create: { id: 3, name: 'Completed', colorHex: '#10B981' }
+      create: { id: 3, name: 'Completed', colorHex: '#10B981' },
     }),
     prisma.appointmentStatus.upsert({
       where: { id: 4 },
       update: {},
-      create: { id: 4, name: 'Cancelled', colorHex: '#EF4444' }
+      create: { id: 4, name: 'Cancelled', colorHex: '#EF4444' },
     }),
     prisma.appointmentStatus.upsert({
       where: { id: 5 },
       update: {},
-      create: { id: 5, name: 'No Show', colorHex: '#6B7280' }
-    })
+      create: { id: 5, name: 'No Show', colorHex: '#6B7280' },
+    }),
   ]);
 
-  console.log('✅ Appointment statuses created:', appointmentStatuses.map(s => s.name));
+  console.log('✅ Appointment statuses:', statuses.map((s) => s.name).join(', '));
 
-  console.log('🎉 Database seeding completed successfully!');
+  console.log('🎉 Seeding completed!');
 }
 
 main()
