@@ -8,7 +8,23 @@ export class BarbershopsService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateBarbershopDto) {
-    return this.prisma.barbershop.create({ data: dto });
+    const brand = await this.prisma.brand.findUnique({
+      where: { id: dto.brandId },
+      select: { ownerId: true },
+    });
+
+    return this.prisma.$transaction(async (tx) => {
+      const barbershop = await tx.barbershop.create({
+        data: dto,
+        include: { brand: true },
+      });
+
+      await tx.barbershopBarber.create({
+        data: { userId: brand.ownerId, barbershopId: barbershop.id },
+      });
+
+      return barbershop;
+    });
   }
 
   async findAll() {

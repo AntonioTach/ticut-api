@@ -58,6 +58,10 @@ export class AuthService {
         select: { id: true, name: true, address: true },
       });
 
+      await tx.barbershopBarber.create({
+        data: { userId: user.id, barbershopId: barbershop.id },
+      });
+
       return { user, brand, barbershop };
     });
 
