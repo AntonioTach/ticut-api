@@ -10,11 +10,11 @@ export class LoginDto {
   email: string;
 
   @ApiProperty({
-    description: 'Contraseña del usuario (mínimo 6 caracteres)',
+    description: 'Contraseña del usuario (mínimo 8 caracteres)',
     example: 'password123',
-    minLength: 6,
+    minLength: 8,
   })
   @IsString()
-  @MinLength(6)
+  @MinLength(8)
   password: string;
 } 
