@@ -12,12 +12,22 @@ import { tap } from 'rxjs/operators';
 export class LoggingInterceptor implements NestInterceptor {
   private readonly logger = new Logger(LoggingInterceptor.name);
 
+  private readonly SENSITIVE_FIELDS = ['password', 'passwordHash', 'token', 'secret'];
+
+  private sanitizeBody(body: Record<string, any>): Record<string, any> {
+    const sanitized = { ...body };
+    for (const field of this.SENSITIVE_FIELDS) {
+      if (field in sanitized) sanitized[field] = '[REDACTED]';
+    }
+    return sanitized;
+  }
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const { method, url, body } = request;
     const now = Date.now();
 
-    this.logger.log(`${method} ${url} - Request Body: ${JSON.stringify(body)}`);
+    this.logger.log(`${method} ${url} - Request Body: ${JSON.stringify(this.sanitizeBody(body))}`);
 
     return next.handle().pipe(
       tap(() => {
