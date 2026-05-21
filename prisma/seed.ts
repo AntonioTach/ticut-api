@@ -25,7 +25,6 @@ async function main() {
   ]);
 
   console.log('✅ Roles:', roles.map((r) => r.name).join(', '));
-
   // ── Plans ─────────────────────────────────────────────────────────────────
   const plans = await Promise.all([
     prisma.plan.upsert({
